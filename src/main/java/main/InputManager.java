@@ -17,7 +17,7 @@ public class InputManager {
     private String state = "0";
     private String response = "";
     private String promptMessage = INITIAL_PROMPT;
-    private String priorPrompt = INITIAL_PROMPT;
+    private String priorState = this.state;
     private boolean exit = false;
 
     private static String INITIAL_PROMPT = """
@@ -91,111 +91,144 @@ public class InputManager {
         }
     }
 
+    private void setState(String state) {
+        this.priorState = this.state;
+        this.state = state;
+    }
+
+    private void switchState() {
+        String state = this.state;
+        this.state = this.priorState;
+        this.priorState = state;
+    }
+
     private void changeState() {
-        System.out.println("STATE: " + this.state);
         switch (this.state) {
             case "0":
                 switch (this.response) {
                     case "0":
-                        this.state = "00";
+                        this.setState("00");
                         break;
                     case "1":
-                        this.state = "1";
+                        this.setState("1");
                         break;
                     case "2":
-                        this.state = "2";
+                        this.setState("2");
                         break;
                     case "3":
-                        this.state = "3";
+                        this.setState("3");
                         break;
                     case "4":
-                        this.state = "4";
+                        this.setState("4");
                         break;
                     case "5":
-                        this.state = "5";
+                        this.setState("5");
+                        break;
+                    case "40028922":
+                        this.setState("40028922");
+                        break;
+                    default:
+                        this.setState("404");
                         break;
                 }
                 break;
             case "1":
                 switch (this.response) {
                     case "0":
-                        this.state = "0";
+                        this.setState("0");
                         break;
                     case "1":
-                        this.state = "11";
+                        this.setState("11");
                         break;
                     case "2":
-                        this.state = "12";
+                        this.setState("12");
                         break;
                     case "3":
-                        this.state = "13";
+                        this.setState("13");
+                        break;
+                    default:
+                        this.setState("404");
                         break;
                 }
                 break;
             case "2":
                 switch (this.response) {
                     case "0":
-                        this.state = "0";
+                        this.setState("0");
                         break;
                     case "1":
-                        this.state = "21";
+                        this.setState("21");
                         break;
                     case "2":
-                        this.state = "22";
+                        this.setState("22");
                         break;
                     case "3":
-                        this.state = "23";
+                        this.setState("23");
+                        break;
+                    default:
+                        this.setState("404");
                         break;
                 }
                 break;
             case "3":
                 switch (this.response) {
                     case "0":
-                        this.state = "0";
+                        this.setState("0");
                         break;
                     case "1":
-                        this.state = "31";
+                        this.setState("31");
                         break;
                     case "2":
-                        this.state = "32";
+                        this.setState("32");
                         break;
                     case "3":
-                        this.state = "33";
+                        this.setState("33");
+                        break;
+                    default:
+                        this.setState("404");
                         break;
                 }
                 break;
             case "4":
                 switch (this.response) {
                     case "0":
-                        this.state = "0";
+                        this.setState("0");
                         break;
                     case "1":
-                        this.state = "41";
+                        this.setState("41");
                         break;
                     case "2":
-                        this.state = "42";
+                        this.setState("42");
                         break;
                     case "3":
-                        this.state = "43";
+                        this.setState("43");
+                        break;
+                    default:
+                        this.setState("404");
                         break;
                 }
                 break;
             case "5":
                 switch (this.response) {
                     case "0":
-                        this.state = "0";
+                        this.setState("0");
                         break;
                     case "1":
-                        this.state = "51";
+                        this.setState("51");
                         break;
                     case "2":
-                        this.state = "52";
+                        this.setState("52");
                         break;
                     case "3":
-                        this.state = "53";
+                        this.setState("53");
+                        break;
+                    default:
+                        this.setState("404");
                         break;
                 }
                 break;
+            default:
+                this.setState("404");
         }
 
     }
@@ -214,75 +247,82 @@ public class InputManager {
                 break;
             case "11":
                 market.showLastSale();
-                this.state = "1";
+                this.switchState();
                 break;
             case "12":
                 market.showFirstSale();
-                this.state = "1";
+                this.switchState();
                 break;
             case "13":
                 market.showAllSales();
-                this.state = "1";
+                this.switchState();
                 break;
             case "2":
                 this.changePrompt(CLIENT_PROMPT);
                 break;
             case "21":
                 this.market.showClientWithMostExpense();
-                this.state = "2";
+                this.switchState();
                 break;
             case "22":
                 this.market.showClientWithLeastExpense();
-                this.state = "2";
+                this.switchState();
                 break;
             case "23":
                 this.market.showAllClients();
-                this.state = "2";
+                this.switchState();
                 break;
             case "3":
                 this.changePrompt(PRODUCT_PROMPT);
                 break;
             case "31":
                 this.market.showMostSoldProduct();
-                this.state = "3";
+                this.switchState();
                 break;
             case "32":
                 this.market.showMostProfitableProduct();
-                this.state = "3";
+                this.switchState();
                 break;
             case "33":
                 this.market.showAllProducts();
-                this.state = "3";
+                this.switchState();
                 break;
             case "4":
                 this.changePrompt(GENERAL_PROMPT);
                 break;
             case "41":
                 this.market.showAllIncome();
-                this.state = "4";
+                this.switchState();
                 break;
             case "42":
                 this.market.showAllSold();
-                this.state = "4";
+                this.switchState();
                 break;
             case "43":
                 this.market.showMeanSalePrice();
-                this.state = "4";
+                this.switchState();
                 break;
             case "5":
                 this.changePrompt(LOGS_PROMPT);
                 break;
             case "51":
                 this.seeLog(1);
-                this.state = "5";
+                this.switchState();
                 break;
             case "52":
                 this.seeLog(2);
-                this.state = "5";
+                this.switchState();
                 break;
             case "53":
                 this.seeLog(3);
-                this.state = "5";
+                this.switchState();
+                break;
+            case "40028922":
+                System.out.println("MEME: É o bonde do yuri que vai dar playstation 2\n");
+                break;
+            case "404":
+                System.out.println("Option Not Found 404;\nPlease select the *Number* of your operation.\n");
+                switchState();
                 break;
         }
     }
@@ -292,7 +332,6 @@ public class InputManager {
     }
 
     private void changePrompt(String prompt) {
-        this.priorPrompt = this.promptMessage;
         this.promptMessage = prompt;
     }
 

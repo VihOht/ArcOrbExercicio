@@ -24,6 +24,8 @@ public class Product {
         System.out.println(averagePrice);
         System.out.print("Quantity Sold: ");
         System.out.println(quantitySold);
+        System.out.print("Total Profity: R$ ");
+        System.out.println(quantitySold * averagePrice);
         System.out.println();
     }
 
