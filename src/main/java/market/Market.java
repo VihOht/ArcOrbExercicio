@@ -78,27 +78,36 @@ public class Market {
 
 
     // General Statistics
-    public double getAllIncome() {
+    public void showAllIncome() {
         double total = 0;
         for(Sale sale : sales) {
             total += sale.getTotalPrice();
         }
-        return total;
+        System.out.println("------------------------");
+        System.out.print("Total Income: R$ ");
+        System.out.println(total);
+        System.out.println();
     }
 
-    public int getAllSold() {
+    public void showAllSold() {
         int total = 0;
         for(Sale sale : sales) {
             total += sale.getQuantitySold();
         }
-        return total;
+        System.out.println("------------------------");
+        System.out.print("Total Income: ");
+        System.out.println(total);
+        System.out.println();
     }
-    public double getMeanSalePrice() {
+    public void showMeanSalePrice() {
         double totalPrice = 0;
         for (Sale sale : sales) {
             totalPrice += sale.getTotalPrice();
         }
-        return  totalPrice / sales.size();
+        System.out.println("------------------------");
+        System.out.print("Total Income: R$ ");
+        System.out.println(totalPrice / sales.size());
+        System.out.println();
     }
 
     // Sale Methods
@@ -110,6 +119,14 @@ public class Market {
         for (Sale sale : sales) {
             sale.showData();
         }
+    }
+
+    public void showFirstSale() {
+        sales.getFirst().showData();
+    }
+
+    public void showLastSale() {
+        sales.getLast().showData();
     }
 
     // Client Methods
@@ -125,6 +142,24 @@ public class Market {
         if (clientWithMostExpense != null) {
             clientWithMostExpense.showData();    
         }
+
+    }
+
+    public void showClientWithLeastExpense() {
+        Client firstClient = clients.getFirst();
+        if (firstClient == null) {
+            return;
+        }
+        Client clientWithLeastExpense = firstClient;
+        double leastExpense=firstClient.getTotalExpenses();
+
+        for (Client client : this.clients) {
+            if (client.getTotalExpenses() < leastExpense) {
+                clientWithLeastExpense = client;
+                leastExpense = client.getTotalExpenses();
+            }
+        }
+        clientWithLeastExpense.showData();
 
     }
 

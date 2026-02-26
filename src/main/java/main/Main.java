@@ -10,8 +10,8 @@ public class Main {
         Market market = new Market();
         market.registerSales(FileManager.VENDAS1);
 
-        Manager manager = new Manager(market);
-        manager.initInteraction();
+        InputManager inputManager = new InputManager(market);
+        inputManager.initInteraction();
 
     }
 }
