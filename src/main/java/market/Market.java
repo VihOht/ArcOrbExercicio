@@ -3,17 +3,17 @@ package market;
 import utils.FileManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Market {
-    // Create a List for all the possible sales;
-    private final List<Sale> sales = new ArrayList<>();
+    HashMap<String, Client> clients = new HashMap<>();
 
-    // Create a List for all users;
-    private final List<Client> clients = new ArrayList<>();
+    HashMap<String, Product> products = new HashMap<>();
 
-    // Create a List for all products;
-    private final List<Product> products = new ArrayList<>();
+    List<Sale> sales = new ArrayList<>();
+
 
     public void registerSales(String vendasFile) {
         // Create a List of String Arrays whose content are each data of a CSV line;
@@ -27,44 +27,26 @@ public class Market {
                 this.sales.add(sale);
 
                 // I hope the trash collect works;
-                // Create a client placeholder object;
-                Client clientObj = new Client();
-                boolean clientExists = false;
-
-                // Create a product placeholder object;
-                Product productObj = new Product();
-                boolean productExists = false;
-
-                for (Client client : this.clients) {
-                    // Try to find an existing Client, if found this clientObj becomes it, mark that it does not exist;
-                    if (client.getName().equals(sale.getClient())) {
-                        clientExists = true;
-                        clientObj = client;
-                        break;
-                    }
-                }
-
-                for (Product product : this.products) {
-                    // Try to find an existing Product, if found this productObj becomes it, mark that it does not exist;
-                    if (product.getName().equals(sale.getProductName())) {
-                        productExists = true;
-                        productObj = product;
-                        break;
-                    }
-                }
 
                 // If the client does not exist, register it, if not just register the sale;
-                if (!clientExists) {
+                Client clientObj = clients.get(sale.getClient());
+                if (clientObj == null) {
+                    clientObj = new Client();
                     clientObj.register(sale);
-                    this.clients.add(clientObj);
+                    this.clients.putIfAbsent(sale.getClient(), clientObj);
                 } else {
                     clientObj.register(sale);
                 }
 
                 // If the product does not exist, register it, if not just register the sale;
-                if (!productExists) {
+
+                Product productObj = products.get(sale.getProductName());
+
+                if (productObj == null) {
+
+                    productObj = new Product();
                     productObj.register(sale.getProductName(), sale.getPrice(), sale.getQuantitySold());
-                    this.products.add(productObj);
+                    this.products.putIfAbsent(sale.getProductName(), productObj);
                 } else {
                     productObj.register(sale.getProductName(), sale.getPrice(), sale.getQuantitySold());
                 }
@@ -133,7 +115,12 @@ public class Market {
     public void showClientWithMostExpense() {
         Client clientWithMostExpense = null;
         double mostExpense=0;
-        for (Client client : this.clients) {
+        for (Map.Entry<String, Client> clientEntry : this.clients.entrySet()) {
+            Client client = clientEntry.getValue();
+            if (clientWithMostExpense == null) {
+                clientWithMostExpense = client;
+                mostExpense = client.getTotalExpenses();
+            }
             if (client.getTotalExpenses() > mostExpense) {
                 clientWithMostExpense = client;
                 mostExpense = client.getTotalExpenses();
@@ -146,41 +133,47 @@ public class Market {
     }
 
     public void showClientWithLeastExpense() {
-        Client firstClient = clients.getFirst();
-        if (firstClient == null) {
-            return;
-        }
-        Client clientWithLeastExpense = firstClient;
-        double leastExpense=firstClient.getTotalExpenses();
+        Client clientWithLeastExpense = null;
+        double leastExpense=0;
 
-        for (Client client : this.clients) {
+        for (Map.Entry<String, Client> clientEntry : this.clients.entrySet()) {
+            Client client = clientEntry.getValue();
+            if (clientWithLeastExpense == null) {
+                clientWithLeastExpense = client;
+                leastExpense = client.getTotalExpenses();
+            }
             if (client.getTotalExpenses() < leastExpense) {
                 clientWithLeastExpense = client;
                 leastExpense = client.getTotalExpenses();
             }
         }
-        clientWithLeastExpense.showData();
+        if (clientWithLeastExpense != null) {
+            clientWithLeastExpense.showData();
+        } else {
+            System.out.println("No client found");
+        }
 
     }
 
     public void showAllClients() {
-        for (Client client : this.clients) {
-            client.showData();
+        for (Map.Entry<String, Client> clientEntry : this.clients.entrySet()) {
+            clientEntry.getValue().showData(true, true, true, false);
         }
     }
 
     // Product Methods
 
     public void showAllProducts() {
-        for (Product product : products) {
-            product.showData();
+        for (Map.Entry<String, Product> productEntry : products.entrySet()) {
+            productEntry.getValue().showData();
         }
     }
 
     public void showMostSoldProduct() {
         Product mostSoldProduct = null;
         int mostQuantity=0;
-        for (Product product : products) {
+        for (Map.Entry<String, Product> productEntry : products.entrySet()) {
+            Product product = productEntry.getValue();
             if (product.getQuantitySold() > mostQuantity) {
                 mostSoldProduct = product;
                 mostQuantity = product.getQuantitySold();
@@ -194,7 +187,8 @@ public class Market {
     public void showMostProfitableProduct() {
         Product mostProfitableProduct = null;
         double mostProfit=0;
-        for (Product product : products) {
+        for (Map.Entry<String, Product> productEntry : products.entrySet()) {
+            Product product = productEntry.getValue();
             if (product.getTotalSold() > mostProfit) {
                 mostProfitableProduct = product;
                 mostProfit = product.getTotalSold();
